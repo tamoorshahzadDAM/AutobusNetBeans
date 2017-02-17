@@ -93,7 +93,7 @@ public class Conexion {
      * @return lista
      * @throws SQLException 
      */
-    public List<Localizacion> obtenerLocalizacion() throws SQLException {
+    public List<Localizacion> obtenerLocalizaciones() throws SQLException {
         ResultSet rset;
         //Crea lista de localizaciones.
         List<Localizacion> lista = new ArrayList();
@@ -199,5 +199,128 @@ public class Conexion {
         //Revuelve true si ya esta borrado.
         return (res == 1);
     }
+    
+    
+    /**
+     * Metodo para insertar autobus, le entra objecto autobus por parametros.
+     * @param auto
+     * @return
+     * @throws SQLException 
+     */
+     public boolean insertarAutobus(Autobuses auto) throws SQLException {
+         //Sentencia sql, que inserta en table de autobuses, matricula y pass.
+        String sql = "INSERT INTO Autobuses (MATRICULA, PASS) VALUES (?, ?)";
+        //Hace conexion, y le pasamos sentencia sql por parametros.
+        PreparedStatement stmt = connection.prepareStatement(sql);
+        
+        //Le añado columnas
+        stmt.setString(1, auto.getMatricula());
+        stmt.setString(2, auto.getPass());
+        //Se ejecuta actualizacion y lo guarda en variable.
+        int res = stmt.executeUpdate();
+        //Finaliza el conexion.
+        finalizarConexion();
+
+        //devuelve res igual a 1.
+        return (res == 1);
+    }
+    
+    
+    /**
+     * Metodo para obtener una lista de todos los autobuses.
+     * @return lista
+     * @throws SQLException 
+     */
+    public List<Autobuses> obtenerAutobuses() throws SQLException {
+        /**
+         * CREATE TABLE Autobuses(
+            MATRICULA VARCHAR(10) PRIMARY KEY,
+            PASS VARCHAR(50));
+         */
+        ResultSet rset;
+        //se crea la lista
+        List<Autobuses> lista = new ArrayList();
+        //Seleciona todos los autobuses.
+        String sql = "SELECT MATRICULA, PASS FROM Autobuses";
+        //Hace conexion, y le pasamos sentencia sql por parametros.
+        PreparedStatement stmt = getConnection().prepareStatement(sql);
+        //se ejecuta el query
+        rset = stmt.executeQuery();
+        //Mientras hay valores, se va ejecutando y va guardando la matricul y pas
+        //en la lista.
+        while (rset.next()) {
+            lista.add(new Autobuses(rset.getString("MATRICULA"), rset.getString("PASS")));
+        }
+        //Finaliza el conexion.
+        finalizarConexion();
+        //Devuelve la lista.
+        return lista;
+    }
+
+    
+    /**
+     * Metodo para obtener un autobus, para buscar lo le pasaremos la matricula
+     * por parametros.
+     * @param matricula
+     * @return autobus
+     * @throws SQLException 
+     */
+    public Autobuses obtenerAutobus(String matricula) throws SQLException {
+        Autobuses autobus = null;
+        ResultSet rset;
+        //Se seleciona todos los campos donde el campo de matricula sea igual de
+        //la que hemos introducido por parametros.
+        String sql = "SELECT * FROM Autobuses WHERE MATRICULA LIKE ?";
+        
+        //Hace conexion, y le pasamos sentencia sql por parametros.
+        PreparedStatement stmt = getConnection().prepareStatement(sql);
+        //se pone la matricula
+        stmt.setString(1, matricula);
+        //Ejecuta el query y el resultado se guarda en rset.
+        rset = stmt.executeQuery();
+        //Mientras hay valores, va buscando la matricla, cuando se encuenta se 
+        //guarda la matricula y pass en variable autobus.
+        while (rset.next()) {
+            
+            autobus = new Autobuses(rset.getString("MATRICULA"), rset.getString("PASS"));
+        }
+        //Finaliza el conexion.
+        finalizarConexion();
+        //devuelve autobus.
+        return autobus;
+    }
+    
+    /**
+     * Metodo para buscar ultima posicion de todos los autobuses.
+     * @return lista
+     * @throws SQLException 
+     */
+    public List<Localizacion> ultimaPosAutoBuses() throws SQLException {
+        ResultSet rset;
+        //Crea la lista
+        List<Localizacion> lista = new ArrayList();
+        //Senetencia sql que nos busca los campos de la table de localizacion, donde
+        //metricula y la fecha esta de la fecha maxima en ese tabla y lo  agrupa por matricula.
+        //Asi tendremos ultima posicuin de cada bus.
+        String sql = "SELECT ID_LOC, LATITUD, LONGITUD, FECHA, MATRICULA FROM Localizacion WHERE (MATRICULA, FECHA) IN"
+                + "(SELECT MATRICULA, MAX(FECHA)) FROM Localizacion GROUP BY MATRICULA)";
+        
+        //Hace conexion, y le pasamos sentencia sql por parametros.
+        PreparedStatement stmt = getConnection().prepareStatement(sql);
+        //Se ejecuta el query
+        rset = stmt.executeQuery();
+        //Mientras hay filas, se va buscando y lo va añadiendo en la lista
+        while (rset.next()) {
+            lista.add(new Localizacion(rset.getInt("ID_LOC"), rset.getDouble("LATITUD"),
+                    rset.getDouble("LONGITUD"), rset.getString("FECHA"), rset.getString("MATRICULA")));
+
+        }
+        //Finaliza el conexion.
+        finalizarConexion();
+        //devuelve la lista.
+        return lista;
+    }
+    
+    
 
 }

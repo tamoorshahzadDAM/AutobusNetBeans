@@ -5,6 +5,7 @@
  */
 package rest;
 
+import bd.Autobuses;
 import bd.Localizacion;
 import bd.Conexion;
 import com.google.gson.Gson;
@@ -42,34 +43,37 @@ public class GenericResource {
     }
 
     /**
-     * Retrieves representation of an instance of rest.GenericResource
-     *
+     * Metodo get que lista todas las localizaciones.
      * @return an instance of java.lang.String
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public String listarLocalizacion() {
 
+        //Crea conexion
         Conexion conexion = new Conexion();
+        //Crea lista
         List<Localizacion> lista = null;
         try {
-            lista = conexion.obtenerLocalizacion();
+            //llama a metodo para obtener localizaciones, y guarda en la lista
+            lista = conexion.obtenerLocalizaciones();
 
         } catch (SQLException ex) {
             Logger.getLogger(GenericResource.class.getName()).log(Level.SEVERE, null, ex);
         }
         Gson gson = new Gson();
 
+        //Devuelve la lista de gson
         return gson.toJson(lista);
     }
 
     /**
-     * PUT method for updating or creating an instance of GenericResource
-     *
+     * Metodo put para insertar localizacion. 
      * @param loc
      * @return
      */
     @PUT
+    @Path("localizacion")
     @Consumes(MediaType.APPLICATION_JSON)
     public boolean insertarLocalizacion(String loc) {
         boolean result = true;
@@ -82,6 +86,7 @@ public class GenericResource {
             conexion.insertarLocalizacion(localizacion);
         } catch (SQLException ex) {
             Logger.getLogger(GenericResource.class.getName()).log(Level.SEVERE, null, ex);
+            
             result = false;
 
         }
@@ -89,8 +94,13 @@ public class GenericResource {
 
     }
 
+    /**
+     * Metodo que mostra localizacion, de la id que introducimos por parametros.
+     * @param id
+     * @return 
+     */
     @GET
-    @Path("{id}")
+    @Path("idLoc/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public String mostrarLocalizacion(@PathParam("id") int id) {
         Localizacion loc = null;
@@ -125,7 +135,6 @@ public class GenericResource {
 
     @DELETE
     @Path("/delete/{id}")
-
     public void eliminarLocalizacion(@PathParam("id") int id) {
         Conexion conexion = new Conexion();
 
@@ -137,4 +146,81 @@ public class GenericResource {
 
         }
     }
+    
+    
+    
+    
+    
+    @GET
+    @Path("autobus")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String mostrarAutobuses() {
+        Conexion conexion = new Conexion();
+        List<Autobuses> aut = null;
+        try {
+            aut = conexion.obtenerAutobuses();
+
+        } catch (SQLException ex) {
+            Logger.getLogger(GenericResource.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        Gson gson = new Gson();
+        return aut.isEmpty() ? gson.toJson(false) : gson.toJson(aut);
+    }
+    
+    @GET
+    @Path("autobus/{matricula}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String mostrarUnBus(@PathParam("matricula") String matricula) {
+        Autobuses auto = null;
+        Conexion conexion = new Conexion();
+        try {
+            auto = conexion.obtenerAutobus(matricula);
+        } catch (SQLException ex) {
+            Logger.getLogger(GenericResource.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        Gson gson = new Gson();
+
+        return auto == null ? gson.toJson(false) : gson.toJson(auto);
+    }
+    
+    
+    @GET
+    @Path("autobus/ultimapos")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String ultimaPosAutobuses() {
+        List<Localizacion> auto = null;
+        Conexion conexion = new Conexion();
+        try {
+            auto = conexion.ultimaPosAutoBuses();
+
+        } catch (SQLException ex) {
+            Logger.getLogger(GenericResource.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        Gson gson = new Gson();
+        return auto.isEmpty() ? gson.toJson(false) : gson.toJson(auto);
+    }
+     
+    @PUT
+    @Path("insertautobus/{matricula}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public boolean insertarAutobus(String matricula) {
+        boolean result = true;
+        Conexion conexion = new Conexion();
+        Gson gson = new Gson();
+        Autobuses autobuses;
+        autobuses = gson.fromJson(matricula, Autobuses.class);
+        try {
+
+            conexion.insertarAutobus(autobuses);
+        } catch (SQLException ex) {
+            Logger.getLogger(GenericResource.class.getName()).log(Level.SEVERE, null, ex);
+            result = false;
+
+        }
+        return result;
+
+    }
+    
+    
+    
 }
