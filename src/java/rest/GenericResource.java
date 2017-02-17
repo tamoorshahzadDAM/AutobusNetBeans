@@ -77,19 +77,21 @@ public class GenericResource {
     @Consumes(MediaType.APPLICATION_JSON)
     public boolean insertarLocalizacion(String loc) {
         boolean result = true;
+        //Se crea conexion
         Conexion conexion = new Conexion();
         Gson gson = new Gson();
         Localizacion localizacion;
         localizacion = gson.fromJson(loc, Localizacion.class);
         try {
-
+            //llamo a metodo de insertar localizacion y le paso localizacion por parametros.
             conexion.insertarLocalizacion(localizacion);
         } catch (SQLException ex) {
             Logger.getLogger(GenericResource.class.getName()).log(Level.SEVERE, null, ex);
-            
+            //EN el caso de error devuelve un false
             result = false;
 
         }
+        //Devuelve boolean de resultat.
         return result;
 
     }
@@ -106,25 +108,37 @@ public class GenericResource {
         Localizacion loc = null;
         Conexion conexion = new Conexion();
         try {
+            //se llama a metodo y el resultado se guarda en loc
             loc = conexion.obtenerLocalizacion(id);
         } catch (SQLException ex) {
+            //En caso de fallo
             Logger.getLogger(GenericResource.class.getName()).log(Level.SEVERE, null, ex);
         }
         Gson gson = new Gson();
 
+        // devuelve json de loc.
         return gson.toJson(loc);
     }
 
+    /**
+     * Metodo para actualizar localizacion.
+     * @param loc
+     * @return 
+     */
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public boolean actualizarLocalizacion(String loc) {
         boolean result = true;
+        //Crea conexion
         Conexion conexion = new Conexion();
+        //Instancia gson
         Gson gson = new Gson();
         Localizacion localizacion;
+        //se recoje loc de objecto gson de la classe localizacion y lo guarda en localizacion.
         localizacion = gson.fromJson(loc, Localizacion.class);
         try {
 
+            //Llama a metodo de actualizar localizacion
             conexion.actualizarLocalizacion(localizacion);
         } catch (SQLException ex) {
             Logger.getLogger(GenericResource.class.getName()).log(Level.SEVERE, null, ex);
@@ -133,6 +147,10 @@ public class GenericResource {
         return result;
     }
 
+    /**
+     * Metodo para poder eliminar localizacion. En caso necesario
+     * @param id 
+     */
     @DELETE
     @Path("/delete/{id}")
     public void eliminarLocalizacion(@PathParam("id") int id) {
@@ -149,24 +167,35 @@ public class GenericResource {
     
     
     
-    
+    /**
+     * Metodo para mostrar todos los auto buses
+     * @return 
+     */
     
     @GET
     @Path("autobus")
     @Produces(MediaType.APPLICATION_JSON)
     public String mostrarAutobuses() {
+        //Crea conexion
         Conexion conexion = new Conexion();
-        List<Autobuses> aut = null;
+        //Crea una lista
+        List<Autobuses> auto = null;
         try {
-            aut = conexion.obtenerAutobuses();
+            //llama a metodo de obtener autobuses y resultado lo guarda en auto
+            auto = conexion.obtenerAutobuses();
 
         } catch (SQLException ex) {
             Logger.getLogger(GenericResource.class.getName()).log(Level.SEVERE, null, ex);
         }
         Gson gson = new Gson();
-        return aut.isEmpty() ? gson.toJson(false) : gson.toJson(aut);
+        return auto.isEmpty() ? gson.toJson(false) : gson.toJson(auto);
     }
     
+    /**
+     * Metodo que muestra un bus, el de la matricula que le pasamos por parametros.
+     * @param matricula
+     * @return 
+     */
     @GET
     @Path("autobus/{matricula}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -184,6 +213,10 @@ public class GenericResource {
     }
     
     
+    /**
+     * Metodo que muestra ultima posicion de bus.
+     * @return 
+     */
     @GET
     @Path("autobus/ultimapos")
     @Produces(MediaType.APPLICATION_JSON)
@@ -200,6 +233,11 @@ public class GenericResource {
         return auto.isEmpty() ? gson.toJson(false) : gson.toJson(auto);
     }
      
+    /**
+     * Metodo para insertar un bus.
+     * @param matricula
+     * @return 
+     */
     @PUT
     @Path("insertautobus/{matricula}")
     @Consumes(MediaType.APPLICATION_JSON)
