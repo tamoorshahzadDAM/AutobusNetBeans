@@ -10,6 +10,7 @@ import bd.Localizacion;
 import bd.Conexion;
 import com.google.gson.Gson;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -47,6 +48,7 @@ public class GenericResource {
      * @return an instance of java.lang.String
      */
     @GET
+    @Path("localizacion")
     @Produces(MediaType.APPLICATION_JSON)
     public String listarLocalizacion() {
 
@@ -73,9 +75,9 @@ public class GenericResource {
      * @return
      */
     @PUT
-    @Path("localizacion")
+    @Path("insertLocalizacion")
     @Consumes(MediaType.APPLICATION_JSON)
-    public boolean insertarLocalizacion(String loc) {
+    public boolean insertarLocalizacion(String loc) throws ParseException {
         boolean result = true;
         //Se crea conexion
         Conexion conexion = new Conexion();
@@ -127,7 +129,7 @@ public class GenericResource {
      */
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public boolean actualizarLocalizacion(String loc) {
+    public boolean actualizarLocalizacion(String loc) throws ParseException {
         boolean result = true;
         //Crea conexion
         Conexion conexion = new Conexion();
