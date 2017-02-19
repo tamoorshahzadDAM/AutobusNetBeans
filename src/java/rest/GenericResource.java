@@ -11,6 +11,7 @@ import bd.Conexion;
 import com.google.gson.Gson;
 import java.sql.SQLException;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -22,7 +23,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.PUT;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
 
@@ -74,7 +74,7 @@ public class GenericResource {
      * @param loc
      * @return
      */
-    @PUT
+    @POST
     @Path("insertLocalizacion")
     @Consumes(MediaType.APPLICATION_JSON)
     public boolean insertarLocalizacion(String loc) throws ParseException {
@@ -199,7 +199,7 @@ public class GenericResource {
      * @return 
      */
     @GET
-    @Path("autobus/{matricula}")
+    @Path("{matricula}")
     @Produces(MediaType.APPLICATION_JSON)
     public String mostrarUnBus(@PathParam("matricula") String matricula) {
         Autobuses auto = null;
@@ -213,6 +213,38 @@ public class GenericResource {
 
         return auto == null ? gson.toJson(false) : gson.toJson(auto);
     }
+    
+    
+    /**
+     * Metodo que muestra ultima localizacion de un autobus pasado su matricula 
+     * por parametros.
+     * @param matricula
+     * @return 
+     */
+    @GET
+    @Path("ultimaPos/{matricula}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String mostrarLocDeUnBus(@PathParam("matricula") String matricula) {
+        //Crea lista
+        List<Localizacion> loc = new ArrayList<>();
+        //Crea conexion
+        Conexion conexion = new Conexion();
+        try {
+            //Ejecuta el metodo
+            loc = conexion.obtenerLocDeBus(matricula);
+        } catch (SQLException ex) {
+            Logger.getLogger(GenericResource.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        Gson gson = new Gson();
+        return loc.isEmpty() ? gson.toJson(false) : gson.toJson(loc);
+    }
+    
+    
+    
+    
+    
+    
+    
     
     
     /**
@@ -240,8 +272,8 @@ public class GenericResource {
      * @param matricula
      * @return 
      */
-    @PUT
-    @Path("insertautobus/{matricula}")
+    @POST
+    @Path("insertautobus")
     @Consumes(MediaType.APPLICATION_JSON)
     public boolean insertarAutobus(String matricula) {
         boolean result = true;

@@ -81,7 +81,7 @@ public class Conexion {
      */
     public boolean insertarLocalizacion(Localizacion loc) throws SQLException, ParseException {
         //Sentencia sql.
-        String sql = "INSERT INTO Localizacion (ID_LOC, LATITUD, LONGITUD, FECHA, MATRICULA) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Localizacion (ID_LOC, LATITUD, LONGITUD, FECHA, MATRICULA) VALUES (?, ?, ?, ?);";
         //Hace una conexion, y por parametro le pasamos sentencia sql.
         PreparedStatement stmt = connection.prepareStatement(sql);
         
@@ -91,15 +91,16 @@ public class Conexion {
         stmt.setDouble(2, loc.getLatitud());
         stmt.setDouble(3, loc.getLongitud());
         
-        
+        /**
         String fecha = loc.getFecha();
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyy-MM-dd HH:mm:ss");
         //Fecha en formato
         Date fechaEnFormato = (Date) dateFormat.parse(fecha);
+        //java.sql.Date fechaFinal = new java.sql.Date(fechaEnFormato.getTime());
         stmt.setDate(4, fechaEnFormato);
-        
+        */
             
-        //stmt.setString(4, loc.getFecha());
+        stmt.setString(4, loc.getFecha());
         
         stmt.setString(5, loc.getMatricula());
         //se actualiza y guarda el resultado en variable res.
@@ -153,7 +154,7 @@ public class Conexion {
         ResultSet rset;
 
         // Sentencia sql
-        String sql = "SELECT ID_LOC, LATITUD, LONGITUD, FECHA, MATRICULA FROM Localizacion";
+        String sql = "SELECT ID_LOC, LATITUD, LONGITUD, FECHA, MATRICULA FROM Localizacion WHERE ID_LOC = ?";
         //Crea conexion y le pasamos sentencia sql por parametros.
         PreparedStatement stmt = getConnection().prepareStatement(sql);
         //le pongo primer columna de id.
@@ -327,7 +328,7 @@ public class Conexion {
         //metricula y la fecha esta de la fecha maxima en ese tabla y lo  agrupa por matricula.
         //Asi tendremos ultima posicuin de cada bus.
         String sql = "SELECT ID_LOC, LATITUD, LONGITUD, FECHA, MATRICULA FROM LOCALIZACION WHERE (MATRICULA, FECHA) IN"
-                + "(SELECT MATRICULA, MAX(FECHA)) FROM LOCALIZACION GROUP BY MATRICULA)";
+                + "(SELECT MATRICULA, MAX(FECHA) FROM LOCALIZACION GROUP BY MATRICULA)";
 
         //Hace conexion, y le pasamos sentencia sql por parametros.
         PreparedStatement stmt = getConnection().prepareStatement(sql);
