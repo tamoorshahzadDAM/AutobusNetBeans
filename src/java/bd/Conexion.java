@@ -81,7 +81,7 @@ public class Conexion {
      */
     public boolean insertarLocalizacion(Localizacion loc) throws SQLException, ParseException {
         //Sentencia sql.
-        String sql = "INSERT INTO Localizacion (ID_LOC, LATITUD, LONGITUD, FECHA, MATRICULA) VALUES (?, ?, ?, ?);";
+        String sql = "INSERT INTO Localizacion (ID_LOC, LATITUD, LONGITUD, FECHA, MATRICULA) VALUES (?, ?, ?, ?, ?);";
         //Hace una conexion, y por parametro le pasamos sentencia sql.
         PreparedStatement stmt = connection.prepareStatement(sql);
         
