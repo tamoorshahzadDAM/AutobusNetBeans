@@ -80,36 +80,27 @@ public class Conexion {
      * @throws SQLException
      */
     public boolean insertarLocalizacion(Localizacion loc) throws SQLException, ParseException {
+          
         //Sentencia sql.
-        String sql = "INSERT INTO Localizacion (ID_LOC, LATITUD, LONGITUD, FECHA, MATRICULA) VALUES (?, ?, ?, ?, ?);";
+        String sql = "INSERT INTO LOCALIZACION (ID_LOC, LATITUD, LONGITUD, FECHA, MATRICULA) VALUES (?, ?, ?, ?, ?)";
         //Hace una conexion, y por parametro le pasamos sentencia sql.
         PreparedStatement stmt = connection.prepareStatement(sql);
-        
 
         //Interto localizacion por el orden que toca a cada columna.
         stmt.setInt(1, loc.getIdloc());
         stmt.setDouble(2, loc.getLatitud());
         stmt.setDouble(3, loc.getLongitud());
-        
-        /**
-        String fecha = loc.getFecha();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyy-MM-dd HH:mm:ss");
-        //Fecha en formato
-        Date fechaEnFormato = (Date) dateFormat.parse(fecha);
-        //java.sql.Date fechaFinal = new java.sql.Date(fechaEnFormato.getTime());
-        stmt.setDate(4, fechaEnFormato);
-        */
-            
         stmt.setString(4, loc.getFecha());
-        
         stmt.setString(5, loc.getMatricula());
         //se actualiza y guarda el resultado en variable res.
         int res = stmt.executeUpdate();
-        //finaliza la conexion.
+        //Finaliza el conexion.
         finalizarConexion();
 
-        //Devuelve el res igual a 1.
+        //devuelve res igual a 1.
         return (res == 1);
+        
+        
     }
 
     /**
