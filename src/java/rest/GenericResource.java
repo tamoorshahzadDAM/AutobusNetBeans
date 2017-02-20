@@ -78,13 +78,15 @@ public class GenericResource {
     @Path("insertLocalizacion")
     @Consumes(MediaType.APPLICATION_JSON)
     public boolean insertarLocalizacion(String loc) throws ParseException {
+        
+        
         boolean result = true;
         //Se crea conexion
         Conexion conexion = new Conexion();
         Gson gson = new Gson();
-        Localizacion localizacion;
-        localizacion = gson.fromJson(loc, Localizacion.class);
+        Localizacion localizacion = gson.fromJson(loc, Localizacion.class);
         try {
+
             //llamo a metodo de insertar localizacion y le paso localizacion por parametros.
             conexion.insertarLocalizacion(localizacion);
         } catch (SQLException ex) {
@@ -93,7 +95,6 @@ public class GenericResource {
             result = false;
 
         }
-        //Devuelve boolean de resultat.
         return result;
 
     }
